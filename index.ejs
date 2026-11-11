@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDICARE - Smart Hospital Appointment System</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MEDICARE</h1>
+            <p>Smart Hospital Appointment Management System</p>
+        </header>
+
+        <div class="grid">
+            <!-- Appointment Booking Form -->
+            <div class="card">
+                <h2>Book Appointment</h2>
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label for="patient_name">Full Name</label>
+                        <input type="text" id="patient_name" name="patient_name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="patient_email">Email</label>
+                        <input type="email" id="patient_email" name="patient_email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="patient_phone">Phone Number</label>
+                        <input type="tel" id="patient_phone" name="patient_phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="doctor_id">Select Doctor</label>
+                        <select id="doctor_id" name="doctor_id" required>
+                            <option value="">-- Choose Doctor --</option>
+                            <% doctors.forEach(doc => { %>
+                                <option value="<%= doc.id %>">
+                                    <%= doc.name %> (<%= doc.department_name %> - ₹<%= doc.fee %>)
+                                </option>
+                            <% }) %>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointment_date">Date</label>
+                        <input type="date" id="appointment_date" name="appointment_date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointment_time">Time Slot</label>
+                        <select id="appointment_time" name="appointment_time" required>
+                            <option value="">-- Choose Slot --</option>
+                            <option value="09:00:00">09:00 AM</option>
+                            <option value="11:00:00">11:00 AM</option>
+                            <option value="14:00:00">02:00 PM</option>
+                            <option value="16:00:00">04:00 PM</option>
+                        </select>
+                    </div>
+
+                    <button type="submit">Confirm Booking</button>
+                </form>
+            </div>
+
+            <!-- Doctor Directory -->
+            <div class="card">
+                <h2>Doctor Directory</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Doctor</th>
+                            <th>Specialty</th>
+                            <th>Fee</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% doctors.forEach(doc => { %>
+                            <tr>
+                                <td><strong><%= doc.name %></strong><br><small><%= doc.qualification %></small></td>
+                                <td><%= doc.department_name %></td>
+                                <td>₹<%= doc.fee %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Appointments Dashboard -->
+        <div class="card" style="margin-top: 30px;">
+            <h2>Recent Appointments</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient Name</th>
+                        <th>Contact</th>
+                        <th>Doctor</th>
+                        <th>Date & Time</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (appointments.length === 0) { %>
+                        <tr>
+                            <td colspan="7" style="text-align: center;">No appointments booked yet.</td>
+                        </tr>
+                    <% } %>
+                    <% appointments.forEach(app => { %>
+                        <tr>
+                            <td>#<%= app.id %></td>
+                            <td><%= app.patient_name %></td>
+                            <td><%= app.patient_phone %></td>
+                            <td><%= app.doctor_name %></td>
+                            <td><%= app.appointment_date.toISOString().split('T')[0] %> @ <%= app.appointment_time %></td>
+                            <td>
+                                <span class="badge <%= app.status === 'Confirmed' ? 'badge-confirmed' : 'badge-cancelled' %>">
+                                    <%= app.status %>
+                                </span>
+                            </td>
+                            <td>
+                                <% if (app.status === 'Confirmed') { %>
+                                    <button class="btn-cancel" onclick="cancelAppointment(<%= app.id %>)">Cancel</button>
+                                <% } else { %>
+                                    -
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>
